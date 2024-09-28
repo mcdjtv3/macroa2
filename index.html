@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>Quiz : Bilan et Comptabilité Financière</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Que représente un bilan comptable ?", choices: ["Un document qui montre les revenus et les dépenses de l'entreprise", "Un état financier qui décrit la situation financière d'une entreprise à une date donnée", "Un document utilisé uniquement pour calculer les impôts", "Un résumé des flux de trésorerie de l'entreprise"], correct: 1 },
+        { question: "Quels sont les deux principaux éléments du bilan ?", choices: ["Actif et passif", "Produits et charges", "Créances et dettes", "Revenus et dépenses"], correct: 0 },
+        { question: "Que sont les actifs courants dans le bilan ?", choices: ["Des ressources à long terme utilisées par l'entreprise", "Des éléments consommés ou transformés en trésorerie dans un délai inférieur à un an", "Des investissements à long terme", "Des dettes à court terme"], correct: 1 },
+        { question: "Que sont les passifs courants dans le bilan ?", choices: ["Des dettes à rembourser sur plus d'un an", "Des dettes à rembourser dans un délai inférieur à un an", "Des investissements de l'entreprise", "Des revenus futurs anticipés"], correct: 1 },
+        { question: "Quel est le rôle du compte de résultat ?", choices: ["Il montre la situation financière à une date donnée", "Il détaille les revenus et les dépenses de l'entreprise pendant une période donnée", "Il enregistre les transactions de trésorerie uniquement", "Il calcule les flux de trésorerie de l'entreprise"], correct: 1 },
+        { question: "Comment calcule-t-on le résultat net dans le compte de résultat ?", choices: ["En soustrayant les passifs des actifs", "En soustrayant les charges des produits", "En additionnant les actifs et les passifs", "En additionnant les flux de trésorerie"], correct: 1 },
+        { question: "Quels sont les éléments principaux du compte de résultat ?", choices: ["Actifs et passifs", "Revenus et dépenses", "Charges et produits", "Capitaux propres et dettes"], correct: 2 },
+        { question: "Que montre le tableau des flux de trésorerie ?", choices: ["Les dettes et les capitaux propres de l'entreprise", "Les flux d'entrées et de sorties d'argent au cours d'une période donnée", "Les bénéfices bruts de l'entreprise", "Les transactions financières entre actionnaires"], correct: 1 },
+        { question: "Quelle est la différence entre un actif non courant et un actif courant ?", choices: ["Un actif non courant est à court terme, un actif courant est à long terme", "Un actif non courant est utilisé pendant plus d'un an, un actif courant est consommé dans l'année", "Un actif non courant est une dette, un actif courant est une créance", "Un actif non courant est toujours liquide, un actif courant est illiquide"], correct: 1 },
+        { question: "Que signifie l'équation : Actif = Passif + Capitaux propres ?", choices: ["Les actifs d'une entreprise sont financés par ses dettes et ses capitaux propres", "Les passifs sont toujours égaux aux capitaux propres", "Les actifs sont toujours supérieurs aux passifs", "Les capitaux propres sont toujours négatifs"], correct: 0 },
+        { question: "Que représente la section des capitaux propres dans le bilan ?", choices: ["Les dettes contractées par l'entreprise", "Les apports des actionnaires et les bénéfices non distribués", "Les créances clients", "Les flux de trésorerie"], correct: 1 },
+        { question: "Que reflète le flux de trésorerie opérationnel dans le tableau des flux de trésorerie ?", choices: ["Les entrées et sorties d'argent liées aux activités d'investissement", "Les transactions liées au financement de l'entreprise", "Les entrées et sorties d'argent liées aux activités courantes de l'entreprise", "Les opérations non financières de l'entreprise"], correct: 2 },
+        { question: "Dans quel état financier trouve-t-on les amortissements ?", choices: ["Dans le bilan", "Dans le compte de résultat", "Dans le tableau des flux de trésorerie", "Dans l'annexe aux états financiers"], correct: 1 },
+        { question: "Que représente la ligne 'résultat net' dans le compte de résultat ?", choices: ["La somme des actifs et passifs de l'entreprise", "Le profit ou la perte générée après déduction des charges des produits", "Les revenus totaux de l'entreprise", "Les dépenses d'investissement"], correct: 1 },
+        { question: "Pourquoi les états financiers sont-ils importants pour les investisseurs ?", choices: ["Ils permettent de calculer les impôts de l'entreprise", "Ils fournissent des informations sur la santé financière de l'entreprise", "Ils montrent les relations entre employés et dirigeants", "Ils indiquent les stratégies marketing de l'entreprise"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+</html>
